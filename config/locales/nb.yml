@@ -14,6 +14,7 @@ nb:
   expand_menu: 'utvide menyen'
   close: lukk
   load_more: 'Last mer'
+  of: 'av'
   languages:
     en: English
     es: Español
@@ -27,7 +28,7 @@ nb:
     de: Deutsch
     fr: Français
     hi: 'हिंदी'
-    zh: 中文
+    zh-CN: 中文
   navigation:
     main_menu: Hovedstedmeny
     user_menu: Brukermeny

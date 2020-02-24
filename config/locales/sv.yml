@@ -14,6 +14,7 @@ sv:
   expand_menu: 'expandera menyn'
   close: stänga
   load_more: 'Ladda mer'
+  of: 'av'
   languages:
     en: English
     es: Español
@@ -27,7 +28,7 @@ sv:
     de: Deutsch
     fr: Français
     hi: 'हिंदी'
-    zh: 中文
+    zh-CN: 中文
   navigation:
     main_menu: 'Huvudsidan meny'
     user_menu: 'Användarmeny'

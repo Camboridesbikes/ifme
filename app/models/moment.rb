@@ -6,7 +6,6 @@
 #  id                      :bigint(8)        not null, primary key
 #  category                :text
 #  name                    :string
-#  mood                    :text
 #  why                     :text
 #  fix                     :text
 #  created_at              :datetime
@@ -29,7 +28,6 @@ class Moment < ApplicationRecord
   friendly_id :name
   serialize :category, Array
   serialize :viewers, Array
-  serialize :mood, Array
   serialize :strategy, Array
 
   before_save :category_array_data
@@ -40,6 +38,10 @@ class Moment < ApplicationRecord
   belongs_to :user
 
   has_many :comments, as: :commentable
+  has_many :moments_moods, dependent: :destroy
+  has_many :moods, through: :moments_moods
+  has_many :moments_categories, dependent: :destroy
+  has_many :categories, through: :moments_categories
 
   validates :comment, inclusion: [true, false]
   validates :user_id, :name, :why, presence: true
@@ -50,6 +52,8 @@ class Moment < ApplicationRecord
   scope :published, -> { where.not(published_at: nil) }
   scope :recent, -> { order('created_at DESC') }
 
+  attr_accessor :mood
+
   def self.find_secret_share!(identifier)
     find_by!(
       # 'secret_share_expires_at > NOW()', TODO: Turn off temporarily
@@ -57,8 +61,19 @@ class Moment < ApplicationRecord
     )
   end
 
+  def self.populate_moments_categories
+    Moment.all.find_each do |moment|
+      moment.category = Category.where(id: moment.category).pluck(:id)
+      moment.save
+    end
+  end
+
   def category_array_data
-    self.category = category.collect(&:to_i) if category.is_a?(Array)
+    return unless category.is_a?(Array)
+
+    category_ids = category.collect(&:to_i)
+    self.category = category_ids
+    self.categories = Category.where(user_id: user_id, id: category_ids)
   end
 
   def viewers_array_data
@@ -66,7 +81,10 @@ class Moment < ApplicationRecord
   end
 
   def mood_array_data
-    self.mood = mood.collect(&:to_i) if mood.is_a?(Array)
+    return unless mood.is_a?(Array)
+
+    mood_ids = mood.collect(&:to_i)
+    self.moods = Mood.where(user_id: user_id, id: mood_ids)
   end
 
   def strategy_array_data

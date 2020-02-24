@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_21_013432) do
+ActiveRecord::Schema.define(version: 2020_02_24_201131) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -133,7 +133,6 @@ ActiveRecord::Schema.define(version: 2019_08_21_013432) do
   create_table "moments", force: :cascade do |t|
     t.text "category"
     t.string "name"
-    t.text "mood"
     t.text "why"
     t.text "fix"
     t.datetime "created_at"
@@ -148,6 +147,18 @@ ActiveRecord::Schema.define(version: 2019_08_21_013432) do
     t.datetime "published_at"
     t.index ["secret_share_identifier"], name: "index_moments_on_secret_share_identifier", unique: true
     t.index ["slug"], name: "index_moments_on_slug", unique: true
+  end
+
+  create_table "moments_categories", force: :cascade do |t|
+    t.integer "moment_id"
+    t.integer "category_id"
+    t.index ["moment_id", "category_id"], name: "index_moments_categories_on_moment_id_and_category_id", unique: true
+  end
+
+  create_table "moments_moods", force: :cascade do |t|
+    t.integer "moment_id"
+    t.integer "mood_id"
+    t.index ["moment_id", "mood_id"], name: "index_moments_moods_on_moment_id_and_mood_id", unique: true
   end
 
   create_table "moods", force: :cascade do |t|
@@ -274,4 +285,8 @@ ActiveRecord::Schema.define(version: 2019_08_21_013432) do
     t.index ["uid"], name: "index_users_on_uid", unique: true
   end
 
+  add_foreign_key "moments_categories", "categories"
+  add_foreign_key "moments_categories", "moments"
+  add_foreign_key "moments_moods", "moments"
+  add_foreign_key "moments_moods", "moods"
 end

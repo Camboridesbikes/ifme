@@ -25,17 +25,14 @@ describe 'ToggleLocale', js: true do
         expect(page).to have_content en_root_title
       end
 
-      # TODO: This test is flakey - needs to be fixed
-      xit 'persists locale selection on a different page' do
+      it 'persists locale selection on a different page' do
         change_language('es')
         expect(page).to have_content es_root_title
         scroll_to('.footer')
 
         change_page(
           lambda {
-            within '.footer' do
-              click_link('Acerca de')
-            end
+            visit about_path
           },
           '.pageTitle',
           have_content('Acerca de')
